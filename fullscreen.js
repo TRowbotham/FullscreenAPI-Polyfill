@@ -1,101 +1,101 @@
 (function( window, undefined ) {
-	'use strict';
+    'use strict';
 
-	var prefixed = function ( prop, context ) {
-		var prefixes = 'webkit moz ms'.split(' '),
-			len = prefixes.length;
+    var prefixed = function ( prop, context ) {
+        var prefixes = 'webkit moz ms'.split(' '),
+            len = prefixes.length;
 
-		prop = prop.charAt(0).toUpperCase() + prop.slice(1);
+        prop = prop.charAt(0).toUpperCase() + prop.slice(1);
 
-		for ( var i = 0; i < len; i++ ) {
-			if ( prefixes[i] + prop in context ) {
-				return prefixes[i];
-			}
-		};
+        for ( var i = 0; i < len; i++ ) {
+            if ( prefixes[i] + prop in context ) {
+                return prefixes[i];
+            }
+        };
 
-		return false;
-	},
+        return false;
+    },
 
-	prefix = prefixed( 'exitFullscreen', document ) || prefixed( 'cancelFullScreen', document );
-	
-	if ( 'exitFullscreen' in document || !prefix ) {
-		return;
-	}
+    prefix = prefixed( 'exitFullscreen', document ) || prefixed( 'cancelFullScreen', document );
 
-	Element.prototype.requestFullscreen = function( allowKeyboardInput ) {
-		if ( (prefix + 'RequestFullscreen') in this ) {
-			this[prefix + 'RequestFullscreen']( allowKeyboardInput );
-		} else {
-			this[prefix + 'RequestFullScreen']( allowKeyboardInput );	
-		}
-	};
+    if ( 'exitFullscreen' in document || !prefix ) {
+        return;
+    }
 
-	document.exitFullscreen = document[prefix + 'ExitFullscreen'] || document[prefix + 'CancelFullScreen'];
+    Element.prototype.requestFullscreen = function( allowKeyboardInput ) {
+        if ( (prefix + 'RequestFullscreen') in this ) {
+            this[prefix + 'RequestFullscreen']( allowKeyboardInput );
+        } else {
+            this[prefix + 'RequestFullScreen']( allowKeyboardInput );
+        }
+    };
 
-	Object.defineProperties( document, {
-		fullscreenEnabled: {
-			get: function() {
-				return !!document[prefix + 'FullScreenEnabled'] || !!document[prefix + 'FullScreenEnabled'];
-			},
-			enumerable: true
-		},
+    document.exitFullscreen = document[prefix + 'ExitFullscreen'] || document[prefix + 'CancelFullScreen'];
 
-		fullscreenElement: {
-			get: function() {
-				return document[prefix + 'FullscreenElement'] || document[prefix + 'FullScreenElement'] || document['webkitCurrentFullScreenElement'] || null;
-			},
-			enumerable: true
-		}
-	});
+    Object.defineProperties( document, {
+        fullscreenEnabled: {
+            get: function() {
+                return !!document[prefix + 'FullScreenEnabled'] || !!document[prefix + 'FullScreenEnabled'];
+            },
+            enumerable: true
+        },
 
-	function escToExit(e) {
-		if ( e.keyCode === 27 ) {
-			document.exitFullscreen();
-			e.stopPropagation();
-			e.preventDefault();
-		}
-	};
+        fullscreenElement: {
+            get: function() {
+                return document[prefix + 'FullscreenElement'] || document[prefix + 'FullScreenElement'] || document['webkitCurrentFullScreenElement'] || null;
+            },
+            enumerable: true
+        }
+    });
 
-	document.addEventListener( prefix + 'fullscreenchange', function() {
-		var e = document.createEvent( 'Event' );
-		e.initEvent( 'fullscreenchange', true, false );
-		document.dispatchEvent( e );
+    function escToExit(e) {
+        if ( e.keyCode === 27 ) {
+            document.exitFullscreen();
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    };
 
-		if ( !!document.fullscreenElement ) {
-			document.addEventListener('keydown', escToExit, false);
-		} else {
-			document.removeEventListener('keydown', escToExit, false);
-		}
-	});
+    document.addEventListener( prefix + 'fullscreenchange', function() {
+        var e = document.createEvent( 'Event' );
+        e.initEvent( 'fullscreenchange', true, false );
+        document.dispatchEvent( e );
 
-	document.addEventListener( prefix + 'fullscreenerror', function() {
-		var e = document.createEvent( 'Event' );
-		e.initEvent( 'fullscreenerror', true, false );
-		document.dispatchEvent( e );
-	});
+        if ( !!document.fullscreenElement ) {
+            document.addEventListener('keydown', escToExit, false);
+        } else {
+            document.removeEventListener('keydown', escToExit, false);
+        }
+    });
 
-	if ( 'allowfullscreen' in HTMLIFrameElement.prototype ) {
-		return;
-	}
+    document.addEventListener( prefix + 'fullscreenerror', function() {
+        var e = document.createEvent( 'Event' );
+        e.initEvent( 'fullscreenerror', true, false );
+        document.dispatchEvent( e );
+    });
 
-	Object.defineProperty( HTMLIFrameElement.prototype, 'allowfullscreen', {
-		get: function() {
-			return this.hasAttribute( 'allowfullscreen' ) || this.hasAttribute( prefix + 'allowfullscreen' );
-		},
+    if ( 'allowfullscreen' in HTMLIFrameElement.prototype ) {
+        return;
+    }
 
-		set: function( bool ) {
-			var afsPrefixed = prefix + 'AllowFullscreen';
-			
-			if ( bool ) {
-				this.setAttribute( 'allowfullscreen', '' );
-				this.setAttribute( afsPrefixed.toLowerCase(), '' );
-			} else {
-				this.removeAttribute( 'allowfullscreen' );
-				this.removeAttribute( afsPrefixed.toLowerCase() );
-			}
-		},
+    Object.defineProperty( HTMLIFrameElement.prototype, 'allowfullscreen', {
+        get: function() {
+            return this.hasAttribute( 'allowfullscreen' ) || this.hasAttribute( prefix + 'allowfullscreen' );
+        },
 
-		enumerable: true
-	});
+        set: function( bool ) {
+            var afsPrefixed = prefix + 'AllowFullscreen';
+
+            if ( bool ) {
+                this.setAttribute( 'allowfullscreen', '' );
+                this.setAttribute( afsPrefixed.toLowerCase(), '' );
+            } else {
+                this.removeAttribute( 'allowfullscreen' );
+                this.removeAttribute( afsPrefixed.toLowerCase() );
+            }
+        },
+
+        enumerable: true
+    });
 
 }( window ));
