@@ -21,6 +21,11 @@
 <p>Returns the element that is displayed in fullscreen, or null if there are no elements currently displayed in
 	fullscreen.</p>
 
+<h3>allowfullscreen</h3>
+<p>This attribute only affects &lt;iframe&gt;s.  When set to true the iframe document will not be allowed to request
+	that an element enterfullscreen.  If omitted or set to false, the iframe document will be allowed to request that an
+	element enter fullscreen.</p>
+
 <h2>Events</h2>
 <h3>fullscreenchange</h3>
 <p>Everytime an Element successfully enters fullscreen or the document exits fullscreen, a fullscreenchange event will
