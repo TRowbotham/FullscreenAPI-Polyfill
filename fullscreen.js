@@ -11,7 +11,7 @@
             if ( prefixes[i] + prop in context ) {
                 return prefixes[i];
             }
-        };
+        }
 
         return false;
     },
@@ -54,7 +54,7 @@
             e.stopPropagation();
             e.preventDefault();
         }
-    };
+    }
 
     document.addEventListener( prefix + 'fullscreenchange', function() {
         var e = document.createEvent( 'Event' );
